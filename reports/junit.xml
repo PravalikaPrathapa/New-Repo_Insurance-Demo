@@ -1,0 +1,234 @@
+<testsuites id="" name="" tests="8" failures="1" skipped="1" errors="2" time="98.977297">
+<testsuite name="beneficiaries\beneficiaries.spec.js" timestamp="2026-11-02T14:27:32.373Z" hostname="insurance-chromium" tests="1" failures="0" skipped="0" time="15.988" errors="0">
+<testcase name="Beneficiary management › TC-BEN-005 | BEN-V05 | Verify that minor beneficiary requires guardian details" classname="beneficiaries\beneficiaries.spec.js" time="15.988">
+<properties>
+<property name="validation-id" value="BEN-V05">
+</property>
+<property name="risk" value="R-BEN-02">
+</property>
+<property name="priority" value="P1">
+</property>
+<property name="seeded-defect-candidate" value="SDC-14">
+</property>
+</properties>
+</testcase>
+</testsuite>
+<testsuite name="dashboard\dashboard.spec.js" timestamp="2026-11-02T14:27:32.373Z" hostname="insurance-chromium" tests="1" failures="0" skipped="0" time="1.938" errors="0">
+<testcase name="Dashboard (agent.valid) › TC-DASH-002 | DASH-V02 | Verify that agent sees only their own applications" classname="dashboard\dashboard.spec.js" time="1.938">
+<properties>
+<property name="validation-id" value="DASH-V02">
+</property>
+<property name="risk" value="R-DASH-01">
+</property>
+<property name="priority" value="P2">
+</property>
+</properties>
+</testcase>
+</testsuite>
+<testsuite name="kyc-financial\kyc-financial.spec.js" timestamp="2026-11-02T14:27:32.373Z" hostname="insurance-chromium" tests="1" failures="0" skipped="0" time="6.798" errors="0">
+<testcase name="KYC, financial and compliance › TC-KYC-006 | KYC-P03 | Verify that incomplete compliance declaration prevents progress" classname="kyc-financial\kyc-financial.spec.js" time="6.798">
+<properties>
+<property name="validation-id" value="KYC-P03">
+</property>
+<property name="risk" value="R-KYC-05">
+</property>
+<property name="priority" value="P2">
+</property>
+<property name="observation" value="Declaration error shown on: review">
+</property>
+</properties>
+</testcase>
+</testsuite>
+<testsuite name="product-selection\product-selection.spec.js" timestamp="2026-11-02T14:27:32.373Z" hostname="insurance-chromium" tests="4" failures="1" skipped="0" time="56.331" errors="2">
+<testcase name="Product selection and policy configuration › TC-PROD-003 | PROD-V03 | Verify that coverage amount below the minimum is blocked" classname="product-selection\product-selection.spec.js" time="18.373">
+<properties>
+<property name="validation-id" value="PROD-V03">
+</property>
+<property name="risk" value="R-PROD-02">
+</property>
+<property name="priority" value="P2">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\product-selection-product--8d7f0-elow-the-minimum-is-blocked-insurance-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\product-selection-product--8d7f0-elow-the-minimum-is-blocked-insurance-chromium\video.webm]]
+
+[[ATTACHMENT|test-results\product-selection-product--8d7f0-elow-the-minimum-is-blocked-insurance-chromium\error-context.md]]
+]]>
+</system-out>
+<error message="No option matching Guaranteed Return Whole Life. Options: Select product | Elite Legacy Whole Life | FlexiPay Whole Life | SecureLife Whole Life | WealthBuilder Whole Life" type="Error">
+<![CDATA[  [insurance-chromium] › product-selection\product-selection.spec.js:33:5 › Product selection and policy configuration › TC-PROD-003 | PROD-V03 | Verify that coverage amount below the minimum is blocked @regression @api @product @P2 › Guaranteed Return Whole Life: 199999 rejected, 200000 accepted 
+
+    Error: No option matching Guaranteed Return Whole Life. Options: Select product | Elite Legacy Whole Life | FlexiPay Whole Life | SecureLife Whole Life | WealthBuilder Whole Life
+
+       at ..\utils\testHelpers.js:48
+
+      46 |     const match = options.find((o) => (typeof pattern === 'string' ? o.text.includes(pattern) : pattern.test(o.text)));
+      47 |     if (!match)
+    > 48 |         throw new Error(`No option matching ${pattern}. Options: ${options.map((o) => o.text).join(' | ')}`);
+         |               ^
+      49 |     await select.selectOption(match.value);
+      50 |     return match.text;
+      51 | }
+        at selectByText (C:\pravalika\Insurance-order-demo-playwright-automation\utils\testHelpers.js:48:15)
+        at ProductConfigurationPage.selectProduct (C:\pravalika\Insurance-order-demo-playwright-automation\pages\ProductConfigurationPage.js:38:9)
+        at ProductConfigurationPage.fill (C:\pravalika\Insurance-order-demo-playwright-automation\pages\ProductConfigurationPage.js:50:9)
+        at C:\pravalika\Insurance-order-demo-playwright-automation\tests\product-selection\product-selection.spec.js:39:17
+        at C:\pravalika\Insurance-order-demo-playwright-automation\tests\product-selection\product-selection.spec.js:37:13
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\reports\test-results\product-selection-product--8d7f0-elow-the-minimum-is-blocked-insurance-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\reports\test-results\product-selection-product--8d7f0-elow-the-minimum-is-blocked-insurance-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\reports\test-results\product-selection-product--8d7f0-elow-the-minimum-is-blocked-insurance-chromium\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Product selection and policy configuration › TC-PROD-004 | PROD-V04 | Verify that coverage amount above the maximum is blocked" classname="product-selection\product-selection.spec.js" time="19.28">
+<properties>
+<property name="validation-id" value="PROD-V04">
+</property>
+<property name="risk" value="R-PROD-02">
+</property>
+<property name="priority" value="P2">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\product-selection-product--e85ca-bove-the-maximum-is-blocked-insurance-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\product-selection-product--e85ca-bove-the-maximum-is-blocked-insurance-chromium\video.webm]]
+
+[[ATTACHMENT|test-results\product-selection-product--e85ca-bove-the-maximum-is-blocked-insurance-chromium\error-context.md]]
+]]>
+</system-out>
+<error message="No option matching Guaranteed Return Whole Life. Options: Select product | Elite Legacy Whole Life | FlexiPay Whole Life | SecureLife Whole Life | WealthBuilder Whole Life" type="Error">
+<![CDATA[  [insurance-chromium] › product-selection\product-selection.spec.js:60:5 › Product selection and policy configuration › TC-PROD-004 | PROD-V04 | Verify that coverage amount above the maximum is blocked @regression @api @product @P2 › Guaranteed Return Whole Life: 2000001 rejected, 2000000 accepted 
+
+    Error: No option matching Guaranteed Return Whole Life. Options: Select product | Elite Legacy Whole Life | FlexiPay Whole Life | SecureLife Whole Life | WealthBuilder Whole Life
+
+       at ..\utils\testHelpers.js:48
+
+      46 |     const match = options.find((o) => (typeof pattern === 'string' ? o.text.includes(pattern) : pattern.test(o.text)));
+      47 |     if (!match)
+    > 48 |         throw new Error(`No option matching ${pattern}. Options: ${options.map((o) => o.text).join(' | ')}`);
+         |               ^
+      49 |     await select.selectOption(match.value);
+      50 |     return match.text;
+      51 | }
+        at selectByText (C:\pravalika\Insurance-order-demo-playwright-automation\utils\testHelpers.js:48:15)
+        at ProductConfigurationPage.selectProduct (C:\pravalika\Insurance-order-demo-playwright-automation\pages\ProductConfigurationPage.js:38:9)
+        at ProductConfigurationPage.fill (C:\pravalika\Insurance-order-demo-playwright-automation\pages\ProductConfigurationPage.js:50:9)
+        at C:\pravalika\Insurance-order-demo-playwright-automation\tests\product-selection\product-selection.spec.js:66:17
+        at C:\pravalika\Insurance-order-demo-playwright-automation\tests\product-selection\product-selection.spec.js:64:13
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\reports\test-results\product-selection-product--e85ca-bove-the-maximum-is-blocked-insurance-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\reports\test-results\product-selection-product--e85ca-bove-the-maximum-is-blocked-insurance-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\reports\test-results\product-selection-product--e85ca-bove-the-maximum-is-blocked-insurance-chromium\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Product selection and policy configuration › TC-PROD-005 | PROD-V05 | Verify that premium recomputes when frequency or coverage amount changes" classname="product-selection\product-selection.spec.js" time="8.844">
+<properties>
+<property name="validation-id" value="PROD-V05">
+</property>
+<property name="risk" value="R-PROD-03">
+</property>
+<property name="priority" value="P1">
+</property>
+<property name="seeded-defect-candidate" value="SDC-12">
+</property>
+</properties>
+</testcase>
+<testcase name="Product selection and policy configuration › TC-PROD-006 | PROD-V06 | Verify that premium agrees with on configuration, summary, review and API" classname="product-selection\product-selection.spec.js" time="9.834">
+<properties>
+<property name="validation-id" value="PROD-V06">
+</property>
+<property name="risk" value="R-PROD-04">
+</property>
+<property name="priority" value="P2">
+</property>
+<property name="seeded-defect-candidate" value="SDC-12">
+</property>
+</properties>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results\product-selection-product--62dd5-tion-summary-review-and-API-insurance-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|test-results\product-selection-product--62dd5-tion-summary-review-and-API-insurance-chromium\video.webm]]
+
+[[ATTACHMENT|test-results\product-selection-product--62dd5-tion-summary-review-and-API-insurance-chromium\error-context.md]]
+]]>
+</system-out>
+<failure message="all four places show the same premium" type="expect.toEqual">
+<![CDATA[  [insurance-chromium] › product-selection\product-selection.spec.js:124:5 › Product selection and policy configuration › TC-PROD-006 | PROD-V06 | Verify that premium agrees with on configuration, summary, review and API @regression @api @product @SDC-12 @P2 › as configured (250,000 + ADB, monthly) 
+
+    Error: all four places show the same premium
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "apiPremium": 116.67,
+    -   "configPremium": 116.67,
+    +   "configPremium": 98.96,
+        "reviewPremium": 116.67,
+        "summary": 116.67,
+      }
+
+      143 |             const expected = totalPremium({ face, rate: p.ratePer1000 }, [{ coverage: face, rate: RIDERS.ADB.ratePer1000 }], 'MONTHLY');
+      144 |             const v = await readAll();
+    > 145 |             expect(v, 'all four places show the same premium').toEqual({ configPremium: expected, summary: expected, reviewPremium: expected, apiPremium: expected });
+          |                                                                ^
+      146 |         });
+      147 |         await test.step('after changing the face value to 300,000', async () => {
+      148 |             await config.goto(app.id);
+        at C:\pravalika\Insurance-order-demo-playwright-automation\tests\product-selection\product-selection.spec.js:145:64
+        at C:\pravalika\Insurance-order-demo-playwright-automation\tests\product-selection\product-selection.spec.js:142:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\reports\test-results\product-selection-product--62dd5-tion-summary-review-and-API-insurance-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\reports\test-results\product-selection-product--62dd5-tion-summary-review-and-API-insurance-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\reports\test-results\product-selection-product--62dd5-tion-summary-review-and-API-insurance-chromium\error-context.md
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="workflow\workflow.spec.js" timestamp="2026-11-02T14:27:32.373Z" hostname="insurance-chromium" tests="1" failures="0" skipped="1" time="0.945" errors="0">
+<testcase name="Submission and status tracking › TC-WF-007 | WF-V07 | Verify that status page agrees with the status API" classname="workflow\workflow.spec.js">
+<properties>
+<property name="validation-id" value="WF-V07">
+</property>
+<property name="risk" value="R-DASH-02">
+</property>
+<property name="priority" value="P1">
+</property>
+<property name="seeded-defect-candidate" value="SDC-18">
+</property>
+<property name="skip" value="REST API is not available on this environment">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+</testsuites>
