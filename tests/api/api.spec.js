@@ -14,7 +14,7 @@ test.use(asRole('learner'));
 const agent = () => emailOf('learner');
 test.describe('API', () => {
     test("TC-API-001 | API-V01 | Verify that products API responds with 200 and the required schema", { "tag": ["@regression", "@smoke", "@api", "@P1"], "annotation": [{ "type": "validation-id", "description": "API-V01" }, { "type": "risk", "description": "R-API-03, R-PROD-05" }, { "type": "priority", "description": "P1" }] }, async ({ api }) => {
-        test.skip(!api.available, 'REST API is not available on this environment');
+       // test.skip(!api.available, 'REST API is not available on this environment');
         const res = await api.products();
         expectApiSuccess(res);
         const items = res.body.data;
@@ -45,7 +45,7 @@ test.describe('API', () => {
         });
     });
     test("TC-API-002 | API-V02 | Verify that application APIs require the API key", { "tag": ["@regression", "@smoke", "@api", "@P1"], "annotation": [{ "type": "validation-id", "description": "API-V02" }, { "type": "risk", "description": "R-API-02, R-AUTH-06" }, { "type": "priority", "description": "P1" }] }, async ({ api }, testInfo) => {
-        test.skip(!api.available, 'REST API is not available on this environment');
+      //  test.skip(!api.available, 'REST API is not available on this environment');
         const noKey = await ApiClient.create({ apiKey: null });
         const wrongKey = await ApiClient.create({ apiKey: 'definitely-wrong-key' });
         try {
@@ -70,8 +70,8 @@ test.describe('API', () => {
         }
         expect((await api.listApplications(agent())).status, 'valid key works').toBe(200);
     });
-    test("TC-API-003 | API-V03 | Verify that client API prevents invalid dates of birth", { "tag": ["@regression", "@api", "@SDC-04", "@SDC-05", "@SDC-19", "@P1"], "annotation": [{ "type": "validation-id", "description": "API-V03" }, { "type": "risk", "description": "R-CLI-01, R-CLI-02, R-API-01" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-04, SDC-05, SDC-19" }] }, async ({ api }, testInfo) => {
-        test.skip(!api.available, 'REST API is not available on this environment');
+    test("TC-API-003 | API-V03 | Verify that client API prevents invalid dates of birth", { "tag": ["@regression", "@api", "@P1"], "annotation": [{ "type": "validation-id", "description": "API-V03" }, { "type": "risk", "description": "R-CLI-01, R-CLI-02, R-API-01" }, { "type": "priority", "description": "P1" }] }, async ({ api }, testInfo) => {
+     //   test.skip(!api.available, 'REST API is not available on this environment');
         const draft = async () => (await buildApplication(api, { agentEmail: agent(), upTo: 'draft' })).id;
         const payload = (dob) => ({
             first_name: 'Qa', last_name: 'Tester', date_of_birth: dob, gender: 'MALE', marital_status: 'SINGLE',
@@ -107,8 +107,8 @@ test.describe('API', () => {
             expect(String(stored).slice(0, 10)).toBe(dob);
         });
     });
-    test("TC-API-004 | API-V04 | Verify that validate API reports beneficiary allocation errors", { "tag": ["@regression", "@api", "@SDC-13", "@SDC-19", "@P1"], "annotation": [{ "type": "validation-id", "description": "API-V04" }, { "type": "risk", "description": "R-BEN-01, R-API-01" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-13, SDC-19" }] }, async ({ api }, testInfo) => {
-        test.skip(!api.available, 'REST API is not available on this environment');
+    test("TC-API-004 | API-V04 | Verify that validate API reports beneficiary allocation errors", { "tag": ["@regression", "@api", "@P1"], "annotation": [{ "type": "validation-id", "description": "API-V04" }, { "type": "risk", "description": "R-BEN-01, R-API-01" }, { "type": "priority", "description": "P1" }] }, async ({ api }, testInfo) => {
+       // test.skip(!api.available, 'REST API is not available on this environment');
         const cases = [
             { label: 'primary total 90%', second: 30, expectError: true },
             { label: 'primary total 110%', second: 50, expectError: true },
@@ -136,8 +136,8 @@ test.describe('API', () => {
             });
         }
     });
-    test("TC-API-005 | API-V05 | Verify that submit API prevents an incomplete application", { "tag": ["@regression", "@api", "@SDC-17", "@SDC-06", "@SDC-19", "@P1"], "annotation": [{ "type": "validation-id", "description": "API-V05" }, { "type": "risk", "description": "R-WF-02, R-KYC-02, R-API-01" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-17, SDC-06, SDC-19" }] }, async ({ api }) => {
-        test.skip(!api.available, 'REST API is not available on this environment');
+    test("TC-API-005 | API-V05 | Verify that submit API prevents an incomplete application", { "tag": ["@regression", "@api", "@P1"], "annotation": [{ "type": "validation-id", "description": "API-V05" }, { "type": "risk", "description": "R-WF-02, R-KYC-02, R-API-01" }, { "type": "priority", "description": "P1" }] }, async ({ api }) => {
+      //  test.skip(!api.available, 'REST API is not available on this environment');
         const app = await buildApplication(api, { agentEmail: agent(), upTo: 'product' }); // no riders step, beneficiaries or documents
         const res = await api.submit(app.id, agent());
         expectApiError(res, 422, MSG.validationFailed);
@@ -146,8 +146,8 @@ test.describe('API', () => {
         expect(status.application_status, 'still a draft').toBe('DRAFT');
         expect(status.application_reference_number ?? '', 'no WL reference issued').not.toMatch(/^WL\d+/);
     });
-    test("TC-API-010 | API-P02 | Verify that login API status codes and response schema", { "tag": ["@regression", "@smoke", "@api", "@SDC-01", "@SDC-02", "@P1"], "annotation": [{ "type": "validation-id", "description": "API-P02" }, { "type": "risk", "description": "R-AUTH-01, R-AUTH-02" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-01, SDC-02" }] }, async ({ api }) => {
-        test.skip(!api.available, 'REST API is not available on this environment');
+    test("TC-API-010 | API-P02 | Verify that login API status codes and response schema", { "tag": ["@regression", "@smoke", "@api", "@P1"], "annotation": [{ "type": "validation-id", "description": "API-P02" }, { "type": "risk", "description": "R-AUTH-01, R-AUTH-02" }, { "type": "priority", "description": "P1" }] }, async ({ api }) => {
+       // test.skip(!api.available, 'REST API is not available on this environment');
         await test.step('valid credentials', async () => {
             const res = await api.login(agent(), env.password);
             expectApiSuccess(res);

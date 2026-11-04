@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductConfigurationPage = void 0;
 const { expect } = require("@playwright/test");
 const { BasePage } = require("./BasePage");
-const { product } = require("../fixtures/referenceData");
+const { product, PRODUCTS } = require("../fixtures/referenceData");
 const { selectByText, disableBrowserValidation, parseMoney, optionValues } = require("../utils/testHelpers");
 /** /applications/{id}/product: product, face value, frequency, terms and the live premium preview. */
 class ProductConfigurationPage extends BasePage {
@@ -36,6 +36,11 @@ class ProductConfigurationPage extends BasePage {
     }
     async selectProduct(code) {
         await selectByText(this.productSelect, product(code).name);
+    }
+    /** Reference products (by code) that this environment really offers in the Product dropdown, matched by name. */
+    async offeredProductCodes() {
+        const texts = await this.productSelect.locator('option').allInnerTexts();
+        return PRODUCTS.filter((p) => texts.some((t) => t.includes(p.name))).map((p) => p.code);
     }
     async setFaceValue(amount) {
         await this.faceValue.fill(String(amount));

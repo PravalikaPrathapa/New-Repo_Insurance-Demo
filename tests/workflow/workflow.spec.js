@@ -51,7 +51,7 @@ async function submitViaReview(page, id) {
     return confirmation.referenceNumber();
 }
 test.describe('Submission and status tracking', () => {
-    test("TC-WF-001 | WF-V01 | Verify that incomplete application is saved as a draft", { "tag": ["@regression", "@workflow", "@SDC-16", "@P1"], "annotation": [{ "type": "validation-id", "description": "WF-V01" }, { "type": "risk", "description": "R-WF-01" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-16" }] }, async ({ page }) => {
+    test("TC-WF-001 | WF-V01 | Verify that incomplete application is saved as a draft", { "tag": ["@regression", "@workflow", "@P1"], "annotation": [{ "type": "validation-id", "description": "WF-V01" }, { "type": "risk", "description": "R-WF-01" }, { "type": "priority", "description": "P1" }] }, async ({ page }) => {
         // The app has no separate "Save draft" button: the draft is created at the start page and saved by each Save and Continue.
         const dashboard = new DashboardPage(page);
         await dashboard.goto();
@@ -62,7 +62,7 @@ test.describe('Submission and status tracking', () => {
         expect(await dashboard.statusOf(id)).toBe('DRAFT');
         await expect(page.getByTestId(`application-open-${id}`)).toBeVisible();
     });
-    test("TC-WF-002 | WF-V02 | Verify that draft can be resumed with the saved data", { "tag": ["@regression", "@api", "@workflow", "@SDC-16", "@P1"], "annotation": [{ "type": "validation-id", "description": "WF-V02" }, { "type": "risk", "description": "R-WF-01" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-16" }] }, async ({ page: setupPage, otherAgent, api }) => {
+    test("TC-WF-002 | WF-V02 | Verify that draft can be resumed with the saved data", { "tag": ["@regression", "@api", "@workflow", "@P1"], "annotation": [{ "type": "validation-id", "description": "WF-V02" }, { "type": "risk", "description": "R-WF-01" }, { "type": "priority", "description": "P1" }] }, async ({ page: setupPage, otherAgent, api }) => {
         const app = await buildApplication(setupPage, { agentEmail: agent(), upTo: 'address' });
         // A fresh browser context with the same login stands in for "log out, log in again".
         const page = await otherAgent('learner');
@@ -130,7 +130,7 @@ test.describe('Submission and status tracking', () => {
             });
         }
     });
-    test("TC-WF-006 | WF-V06 | Verify that dashboard status refreshes after submission", { "tag": ["@regression", "@api", "@workflow", "@SDC-18", "@P1"], "annotation": [{ "type": "validation-id", "description": "WF-V06" }, { "type": "risk", "description": "R-WF-03, R-DASH-02" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-18" }] }, async ({ page, api }) => {
+    test("TC-WF-006 | WF-V06 | Verify that dashboard status refreshes after submission", { "tag": ["@regression", "@api", "@workflow", "@P1"], "annotation": [{ "type": "validation-id", "description": "WF-V06" }, { "type": "risk", "description": "R-WF-03, R-DASH-02" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }) => {
         const app = await buildApplication(page, { agentEmail: agent() });
         const dashboard = new DashboardPage(page);
         await dashboard.goto();
@@ -143,8 +143,8 @@ test.describe('Submission and status tracking', () => {
         expect(await dashboard.summaryCount('draft'), 'draft counter decreases by one').toBe(draftBefore - 1);
         expect(await dashboard.summaryCount('submitted'), 'submitted counter increases by one').toBe(submittedBefore + 1);
     });
-    test("TC-WF-007 | WF-V07 | Verify that status page agrees with the status API", { "tag": ["@regression", "@api", "@workflow", "@SDC-18", "@P1"], "annotation": [{ "type": "validation-id", "description": "WF-V07" }, { "type": "risk", "description": "R-DASH-02" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-18" }] }, async ({ page, api }) => {
-        test.skip(!api.available, 'REST API is not available on this environment');
+    test("TC-WF-007 | WF-V07 | Verify that status page agrees with the status API", { "tag": ["@regression", "@api", "@workflow",  "@P1"], "annotation": [{ "type": "validation-id", "description": "WF-V07" }, { "type": "risk", "description": "R-DASH-02" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }) => {
+      //  test.skip(!api.available, 'REST API is not available on this environment');
         const app = await buildApplication(page, { agentEmail: agent() });
         expectApiSuccess(await api.submit(app.id, agent()));
         const apiStatus = (await api.status(app.id, agent())).body.data;

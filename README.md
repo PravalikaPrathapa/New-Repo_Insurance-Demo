@@ -10,7 +10,7 @@ The project uses JavaScript throughout; it has **not yet been run against the re
 ## 1. Prerequisites
 
 - Node.js 20 or newer, npm
-- Access to your assigned lab VM (Insurance app on `http://35.200.146.53:8081`)
+- Access to your assigned lab VM (Insurance app on `http://34.100.179.13:8081`)
 - The test credentials and API key from the **Lab Manual** (sections 3 and 4). They are never stored in this repository.
 
 ## 2. Setup

@@ -42,6 +42,7 @@ exports.saveLogins = saveLogins;
 async function globalSetup(_config) {
     await convertExcelToJson();
     const base = env.baseUrl;
+    console.log(`[setup] UI base URL: ${base} | API base URL: ${env.apiBase}`);
     const attempts = [
         { url: `${base}/login`, headers: {} },
         { url: `${base}/api/health`, headers: process.env.INSURANCE_API_KEY ? { 'X-API-Key': process.env.INSURANCE_API_KEY } : {} },

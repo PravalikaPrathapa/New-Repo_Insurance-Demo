@@ -24,11 +24,14 @@ class ApiClient {
         const headers = { Accept: 'application/json' };
         if (key)
             headers['X-API-Key'] = key;
-        const ctx = await request.newContext({ baseURL: env.apiBase, extraHTTPHeaders: headers });
+        const ctx = await request.newContext({ baseURL: env.apiBase, extraHTTPHeaders: headers, timeout: 15000 });
         return new ApiClient(ctx);
     }
     /** True when the REST API answers on this environment (probed once per worker). */
     static async isAvailable() {
+        // The API is OFF unless INSURANCE_USE_API=1: no probe, no waiting on an unreachable host.
+        if (process.env.INSURANCE_USE_API !== '1')
+            return false;
         if (ApiClient.availability === undefined) {
             const probe = await ApiClient.create();
             try {

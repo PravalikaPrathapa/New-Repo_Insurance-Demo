@@ -47,7 +47,7 @@ test.describe('Beneficiary management', () => {
             await expect(page.getByTestId(`beneficiary-irrevocable-badge-${newId}`)).toBeVisible();
         });
     });
-    test("TC-BEN-002 | BEN-V02 | Verify that primary allocation below 100% is flagged and prevents submission", { "tag": ["@regression", "@beneficiary", "@SDC-13", "@P1"], "annotation": [{ "type": "validation-id", "description": "BEN-V02" }, { "type": "risk", "description": "R-BEN-01" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-13" }] }, async ({ page, api }, testInfo) => {
+    test("TC-BEN-002 | BEN-V02 | Verify that primary allocation below 100% is flagged and prevents submission", { "tag": ["@regression", "@beneficiary", "@P1"], "annotation": [{ "type": "validation-id", "description": "BEN-V02" }, { "type": "risk", "description": "R-BEN-01" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }, testInfo) => {
         const id = await atBeneficiaries(page);
         const ben = new BeneficiaryPage(page);
         await ben.goto(id);
@@ -71,7 +71,7 @@ test.describe('Beneficiary management', () => {
             expect(anyMatches(await review.errors(), MSG.primaryTotal)).toBe(false);
         });
     });
-    test("TC-BEN-003 | BEN-V03 | Verify that primary allocation above 100% is blocked", { "tag": ["@regression", "@beneficiary", "@SDC-13", "@P1"], "annotation": [{ "type": "validation-id", "description": "BEN-V03" }, { "type": "risk", "description": "R-BEN-01" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-13" }] }, async ({ page, api }) => {
+    test("TC-BEN-003 | BEN-V03 | Verify that primary allocation above 100% is blocked", { "tag": ["@regression", "@beneficiary",  "@P1"], "annotation": [{ "type": "validation-id", "description": "BEN-V03" }, { "type": "risk", "description": "R-BEN-01" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }) => {
         const id = await atBeneficiaries(page);
         const ben = new BeneficiaryPage(page);
         await ben.goto(id);
@@ -83,7 +83,7 @@ test.describe('Beneficiary management', () => {
         await expect(ben.rows(), 'second beneficiary was not saved').toHaveCount(1);
         expect(await ben.primaryTotal()).toBe(60);
     });
-    test("TC-BEN-004 | BEN-V04 | Verify that secondary allocation is validated separately", { "tag": ["@regression", "@beneficiary", "@SDC-13", "@P1"], "annotation": [{ "type": "validation-id", "description": "BEN-V04" }, { "type": "risk", "description": "R-BEN-01" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-13" }] }, async ({ page, api }, testInfo) => {
+    test("TC-BEN-004 | BEN-V04 | Verify that secondary allocation is validated separately", { "tag": ["@regression", "@beneficiary", "@P1"], "annotation": [{ "type": "validation-id", "description": "BEN-V04" }, { "type": "risk", "description": "R-BEN-01" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }, testInfo) => {
         const id = await atBeneficiaries(page);
         const ben = new BeneficiaryPage(page);
         await ben.goto(id);
@@ -106,7 +106,7 @@ test.describe('Beneficiary management', () => {
             expect(await ben.secondaryTotal()).toBe(100);
         });
     });
-    test("TC-BEN-005 | BEN-V05 | Verify that minor beneficiary requires guardian details", { "tag": ["@regression", "@beneficiary", "@SDC-14", "@P1"], "annotation": [{ "type": "validation-id", "description": "BEN-V05" }, { "type": "risk", "description": "R-BEN-02" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-14" }] }, async ({ page, api }) => {
+    test("TC-BEN-005 | BEN-V05 | Verify that minor beneficiary requires guardian details", { "tag": ["@regression", "@beneficiary", "@P1"], "annotation": [{ "type": "validation-id", "description": "BEN-V05" }, { "type": "risk", "description": "R-BEN-02" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }) => {
         const id = await atBeneficiaries(page);
         const ben = new BeneficiaryPage(page);
         await ben.goto(id);
@@ -128,7 +128,7 @@ test.describe('Beneficiary management', () => {
             await expect(ben.rows()).toHaveCount(2);
         });
     });
-    test("TC-BEN-008 | BEN-V08 | Verify that duplicate beneficiary is blocked", { "tag": ["@regression", "@api", "@beneficiary", "@SDC-15", "@P2"], "annotation": [{ "type": "validation-id", "description": "BEN-V08" }, { "type": "risk", "description": "R-BEN-03" }, { "type": "priority", "description": "P2" }, { "type": "seeded-defect-candidate", "description": "SDC-15" }] }, async ({ page, api }) => {
+    test("TC-BEN-008 | BEN-V08 | Verify that duplicate beneficiary is blocked", { "tag": ["@regression", "@api", "@beneficiary",  "@P2"], "annotation": [{ "type": "validation-id", "description": "BEN-V08" }, { "type": "risk", "description": "R-BEN-03" }, { "type": "priority", "description": "P2" }] }, async ({ page, api }) => {
         const id = await atBeneficiaries(page);
         const ben = new BeneficiaryPage(page);
         await ben.goto(id);

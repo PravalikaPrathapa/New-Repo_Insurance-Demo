@@ -50,7 +50,7 @@ test.describe('Dashboard (agent.new)', () => {
 });
 test.describe('Dashboard (learner: write flows)', () => {
     test.use(asRole('learner'));
-    test("TC-DASH-004 | DASH-V04 | Verify that draft can be resumed from the dashboard", { "tag": ["@regression", "@dashboard", "@SDC-16", "@P2"], "annotation": [{ "type": "validation-id", "description": "DASH-V04" }, { "type": "risk", "description": "R-DASH-03" }, { "type": "priority", "description": "P2" }, { "type": "seeded-defect-candidate", "description": "SDC-16" }] }, async ({ page, api }) => {
+    test("TC-DASH-004 | DASH-V04 | Verify that draft can be resumed from the dashboard", { "tag": ["@regression", "@dashboard", "@P2"], "annotation": [{ "type": "validation-id", "description": "DASH-V04" }, { "type": "risk", "description": "R-DASH-03" }, { "type": "priority", "description": "P2" }] }, async ({ page, api }) => {
         const agent = emailOf('learner');
         const app = await buildApplication(page, { agentEmail: agent, upTo: 'client' });
         const dashboard = new DashboardPage(page);

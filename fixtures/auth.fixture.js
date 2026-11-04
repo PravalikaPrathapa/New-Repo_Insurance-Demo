@@ -14,9 +14,13 @@ function asRole(role) {
 exports.asRole = asRole;
 exports.test = test.extend({
     api: async ({}, use) => {
+        // The REST API is optional (off unless INSURANCE_USE_API=1). Tests set up data through the UI; API checks run only when it is available.
+        if (!(await ApiClient.isAvailable())) {
+            await use({ available: false });
+            return;
+        }
         const client = await ApiClient.create();
-        // The REST API is not deployed on every environment. Tests set up data through the UI; API checks run only when it exists.
-        client.available = await ApiClient.isAvailable();
+        client.available = true;
         await use(client);
         await client.dispose();
     },

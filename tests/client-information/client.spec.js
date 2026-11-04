@@ -16,6 +16,12 @@ test.use(asRole('learner'));
 async function emptyDraft(page) {
     return (await buildApplication(page, { agentEmail: emailOf('learner'), upTo: 'draft' })).id;
 }
+/** Calculated age the app shows on the review page. Diagnostic only: it makes an age-rule failure self-explanatory. */
+async function shownAge(page, applicationId) {
+    const review = new ReviewPage(page);
+    await review.goto(applicationId);
+    return review.calculatedAge().catch(() => 'n/a');
+}
 test.describe('Client / insured information', () => {
     test("TC-CLI-001 | CLI-V01 | Verify that an agent is able to provide valid insured information", { "tag": ["@regression", "@smoke", "@client", "@P1"], "annotation": [{ "type": "validation-id", "description": "CLI-V01" }, { "type": "risk", "description": "R-CLI-03, R-CLI-05" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }) => {
         const dashboard = new DashboardPage(page);
@@ -30,27 +36,31 @@ test.describe('Client / insured information', () => {
             expect(await client.values()).toMatchObject({ firstName: data.firstName, lastName: data.lastName, dob: data.dob });
         });
     });
-    test("TC-CLI-003 | CLI-V03 | Verify that dOB below 18 is blocked", { "tag": ["@regression", "@client", "@SDC-04", "@P1"], "annotation": [{ "type": "validation-id", "description": "CLI-V03" }, { "type": "risk", "description": "R-CLI-01" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-04" }] }, async ({ page, api }, testInfo) => {
+    test("TC-CLI-003 | CLI-V03 | Verify that dOB below 18 is blocked", { "tag": ["@regression", "@client", "@P1"], "annotation": [{ "type": "validation-id", "description": "CLI-V03" }, { "type": "risk", "description": "R-CLI-01" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }, testInfo) => {
         const id = await emptyDraft(page);
         const client = new ClientInformationPage(page);
         await client.goto(id);
-        await client.fill(clientData({ dob: dobForAge(18, 1) })); // 17 years 364 days
+        const dob = dobForAge(18, 1); // 17 years 364 days
+        await client.fill(clientData({ dob }));
         await client.save();
         const where = await ageErrorSurface(page, id);
         testInfo.annotations.push({ type: 'observation', description: `Age error shown on: ${where ?? 'NOWHERE'}` });
-        expect(where, 'age 17y364d must produce the age-range error (form or review page)').not.toBeNull();
+        const shown = where === null ? await shownAge(page, id) : 'n/a';
+        expect(where, `DOB ${dob} (17y364d) must produce the age-range error (form or review page); app calculated age = ${shown}`).not.toBeNull();
     });
-    test("TC-CLI-004 | CLI-V04 | Verify that dOB above 65 is blocked", { "tag": ["@regression", "@client", "@SDC-04", "@P1"], "annotation": [{ "type": "validation-id", "description": "CLI-V04" }, { "type": "risk", "description": "R-CLI-01" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-04" }] }, async ({ page, api }, testInfo) => {
+    test("TC-CLI-004 | CLI-V04 | Verify that dOB above 65 is blocked", { "tag": ["@regression", "@client",  "@P1"], "annotation": [{ "type": "validation-id", "description": "CLI-V04" }, { "type": "risk", "description": "R-CLI-01" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }, testInfo) => {
         const id = await emptyDraft(page);
         const client = new ClientInformationPage(page);
         await client.goto(id);
-        await client.fill(clientData({ dob: dobForAge(66) }));
+        const dob = dobForAge(66);
+        await client.fill(clientData({ dob }));
         await client.save();
         const where = await ageErrorSurface(page, id);
         testInfo.annotations.push({ type: 'observation', description: `Age error shown on: ${where ?? 'NOWHERE'}` });
-        expect(where, 'age 66 must produce the age-range error (form or review page)').not.toBeNull();
+        const shown = where === null ? await shownAge(page, id) : 'n/a';
+        expect(where, `DOB ${dob} (age 66) must produce the age-range error (form or review page); app calculated age = ${shown}`).not.toBeNull();
     });
-    test("TC-CLI-005 | CLI-V05 | Verify that future DOB is blocked", { "tag": ["@regression", "@client", "@SDC-05", "@P2"], "annotation": [{ "type": "validation-id", "description": "CLI-V05" }, { "type": "risk", "description": "R-CLI-02" }, { "type": "priority", "description": "P2" }, { "type": "seeded-defect-candidate", "description": "SDC-05" }] }, async ({ page, api }) => {
+    test("TC-CLI-005 | CLI-V05 | Verify that future DOB is blocked", { "tag": ["@regression", "@client", "@P2"], "annotation": [{ "type": "validation-id", "description": "CLI-V05" }, { "type": "risk", "description": "R-CLI-02" }, { "type": "priority", "description": "P2" }] }, async ({ page, api }) => {
         const id = await emptyDraft(page);
         const client = new ClientInformationPage(page);
         for (const dob of [futureDate(1), futureDate(3650)]) {
@@ -63,24 +73,27 @@ test.describe('Client / insured information', () => {
             });
         }
         await test.step('nothing in the future was stored', async () => {
+            if (!api.available)
+                return; // the REST API is not reachable on this environment: the UI checks above already ran
             const res = await api.getClient(id, emailOf('learner'));
             const stored = res.body?.data?.date_of_birth;
             if (stored)
                 expect(String(stored).slice(0, 10) <= toIso(new Date())).toBe(true);
         });
     });
-    test("TC-CLI-006 | CLI-P01 | Verify that age boundaries 18 and 65 are accepted", { "tag": ["@regression", "@client", "@SDC-04", "@P1"], "annotation": [{ "type": "validation-id", "description": "CLI-P01" }, { "type": "risk", "description": "R-CLI-01" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-04" }] }, async ({ page, api }) => {
+    test("TC-CLI-006 | CLI-P01 | Verify that age boundaries 18 and 65 are accepted", { "tag": ["@regression", "@client", "@P1"], "annotation": [{ "type": "validation-id", "description": "CLI-P01" }, { "type": "risk", "description": "R-CLI-01" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }) => {
         const id = await emptyDraft(page);
         const client = new ClientInformationPage(page);
         const review = new ReviewPage(page);
         for (const age of [18, 65]) {
             await test.step(`age exactly ${age}`, async () => {
                 await client.goto(id);
-                await client.fill(clientData({ dob: dobForAge(age) }));
+                const dob = dobForAge(age);
+                await client.fill(clientData({ dob }));
                 await client.save();
                 await expect(page, `age ${age} is accepted and the flow moves on`).toHaveURL(/address-contact/);
                 await review.goto(id);
-                expect(await review.calculatedAge(), 'calculated age on review page').toBe(age);
+                expect(await review.calculatedAge(), `calculated age on review page for DOB ${dob} (exactly ${age} today)`).toBe(age);
                 expect(anyMatches(await review.errors(), MSG.ageRange), `no age error at ${age}`).toBe(false);
             });
         }

@@ -15,6 +15,19 @@ const { parseMoney } = require("../../utils/testHelpers");
 test.use(asRole('learner'));
 const agent = () => emailOf('learner');
 const sorted = (a) => [...a].sort();
+/**
+ * Reference products that the Product dropdown actually offers. The min/max face-value rules are tested for every offered
+ * product; a product that is not offered is recorded as an observation instead of crashing the data-driven loop here
+ * (its absence is reported once, by TC-PROD-001).
+ */
+async function offeredProducts(config) {
+    const codes = await config.offeredProductCodes();
+    expect(codes.length, 'the Product dropdown offers at least one known product').toBeGreaterThan(0);
+    const missing = PRODUCTS.filter((p) => !codes.includes(p.code)).map((p) => p.code);
+    if (missing.length)
+        test.info().annotations.push({ type: 'observation', description: `Not offered on this environment, skipped here: ${missing.join(', ')} (reported by TC-PROD-001)` });
+    return PRODUCTS.filter((p) => codes.includes(p.code));
+}
 test.describe('Product selection and policy configuration', () => {
     test("TC-PROD-001 | PROD-V01 | Verify that catalog displays the expected Whole Life products", { "tag": ["@regression", "@smoke", "@api", "@product", "@P1"], "annotation": [{ "type": "validation-id", "description": "PROD-V01" }, { "type": "risk", "description": "R-PROD-05" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }) => {
         const catalog = new ProductCatalogPage(page);
@@ -26,14 +39,18 @@ test.describe('Product selection and policy configuration', () => {
             const activeApi = res.body.data.filter((p) => !!p.is_active).map((p) => p.product_code);
             expect(sorted(uiCodes), 'UI cards equal active products in the API').toEqual(sorted(activeApi));
         }
-        expect(sorted(uiCodes), 'seeded products are all listed').toEqual(sorted(PRODUCTS.map((p) => p.code)));
+        const expectedCodes = PRODUCTS.map((p) => p.code);
+        expect(expectedCodes.filter((c) => !uiCodes.includes(c)), 'seeded products missing from the catalog').toEqual([]);
+        expect(uiCodes.filter((c) => !expectedCodes.includes(c)), 'unexpected extra products in the catalog').toEqual([]);
         for (const code of uiCodes)
             await expect(catalog.card(code)).toBeVisible();
     });
     test("TC-PROD-003 | PROD-V03 | Verify that coverage amount below the minimum is blocked", { "tag": ["@regression", "@api", "@product", "@P2"], "annotation": [{ "type": "validation-id", "description": "PROD-V03" }, { "type": "risk", "description": "R-PROD-02" }, { "type": "priority", "description": "P2" }] }, async ({ page, api }) => {
         const app = await buildApplication(page, { agentEmail: agent(), upTo: 'kyc' }); // client age 40 is eligible for every product
         const config = new ProductConfigurationPage(page);
-        for (const p of PRODUCTS) {
+        await config.goto(app.id);
+        const offered = await offeredProducts(config);
+        for (const p of offered) {
             await test.step(`${p.name}: ${p.faceMin - 1} rejected, ${p.faceMin} accepted`, async () => {
                 await config.goto(app.id);
                 await config.fill(productData({ productCode: p.code, faceValue: p.faceMin - 1 }));
@@ -60,7 +77,9 @@ test.describe('Product selection and policy configuration', () => {
     test("TC-PROD-004 | PROD-V04 | Verify that coverage amount above the maximum is blocked", { "tag": ["@regression", "@api", "@product", "@P2"], "annotation": [{ "type": "validation-id", "description": "PROD-V04" }, { "type": "risk", "description": "R-PROD-02" }, { "type": "priority", "description": "P2" }] }, async ({ page, api }) => {
         const app = await buildApplication(page, { agentEmail: agent(), upTo: 'kyc' });
         const config = new ProductConfigurationPage(page);
-        for (const p of PRODUCTS) {
+        await config.goto(app.id);
+        const offered = await offeredProducts(config);
+        for (const p of offered) {
             await test.step(`${p.name}: ${p.faceMax + 1} rejected, ${p.faceMax} accepted`, async () => {
                 await config.goto(app.id);
                 await config.fill(productData({ productCode: p.code, faceValue: p.faceMax + 1 }));
@@ -84,7 +103,7 @@ test.describe('Product selection and policy configuration', () => {
             expectApiError(res, 422, MSG.faceAboveMax);
         });
     });
-    test("TC-PROD-005 | PROD-V05 | Verify that premium recomputes when frequency or coverage amount changes", { "tag": ["@regression", "@api", "@product", "@SDC-12", "@P1"], "annotation": [{ "type": "validation-id", "description": "PROD-V05" }, { "type": "risk", "description": "R-PROD-03" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-12" }] }, async ({ page, api }) => {
+    test("TC-PROD-005 | PROD-V05 | Verify that premium recomputes when frequency or coverage amount changes", { "tag": ["@regression", "@api", "@product", "@P1"], "annotation": [{ "type": "validation-id", "description": "PROD-V05" }, { "type": "risk", "description": "R-PROD-03" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }) => {
         const app = await buildApplication(page, { agentEmail: agent(), upTo: 'kyc' });
         const p = product('WL_SECURE_BASIC');
         const config = new ProductConfigurationPage(page);
@@ -121,7 +140,7 @@ test.describe('Product selection and policy configuration', () => {
             }
         });
     });
-    test("TC-PROD-006 | PROD-V06 | Verify that premium agrees with on configuration, summary, review and API", { "tag": ["@regression", "@api", "@product", "@SDC-12", "@P2"], "annotation": [{ "type": "validation-id", "description": "PROD-V06" }, { "type": "risk", "description": "R-PROD-04" }, { "type": "priority", "description": "P2" }, { "type": "seeded-defect-candidate", "description": "SDC-12" }] }, async ({ page, api }) => {
+    test("TC-PROD-006 | PROD-V06 | Verify that premium agrees with on configuration, summary, review and API", { "tag": ["@regression", "@api", "@product", "@P2"], "annotation": [{ "type": "validation-id", "description": "PROD-V06" }, { "type": "risk", "description": "R-PROD-04" }, { "type": "priority", "description": "P2" }] }, async ({ page, api }) => {
         const face = 250000;
         const app = await buildApplication(page, {
             agentEmail: agent(), upTo: 'riders', product: { faceValue: face, frequency: 'MONTHLY' }, riders: [{ key: 'ADB', coverage: face }],

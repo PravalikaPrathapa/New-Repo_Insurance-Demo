@@ -12,7 +12,7 @@ const { MSG } = require("../../utils/messages");
 test.use(asRole('learner'));
 const agent = () => emailOf('learner');
 test.describe('KYC, financial and compliance', () => {
-    test("TC-KYC-001 | CLI-V08 | Verify that sSN is masked on every screen and response", { "tag": ["@regression", "@smoke", "@api", "@kyc", "@SDC-07", "@P1"], "annotation": [{ "type": "validation-id", "description": "CLI-V08" }, { "type": "risk", "description": "R-KYC-01" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-07" }] }, async ({ page, api }) => {
+    test("TC-KYC-001 | CLI-V08 | Verify that sSN is masked on every screen and response", { "tag": ["@regression", "@smoke", "@api", "@kyc",  "@P1"], "annotation": [{ "type": "validation-id", "description": "CLI-V08" }, { "type": "risk", "description": "R-KYC-01" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }) => {
         const app = await buildApplication(page, { agentEmail: agent(), upTo: 'address' });
         const kyc = new KycFinancialPage(page);
         await kyc.goto(app.id);
@@ -67,7 +67,7 @@ test.describe('KYC, financial and compliance', () => {
             await kyc.fillAndSave(kycData({ isPep: false }));
         });
     });
-    test("TC-KYC-004 | KYC-P01 | Verify that premium must be affordable against income (20%)", { "tag": ["@regression", "@api", "@kyc", "@SDC-08", "@P1"], "annotation": [{ "type": "validation-id", "description": "KYC-P01" }, { "type": "risk", "description": "R-KYC-03" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-08" }] }, async ({ page, api }) => {
+    test("TC-KYC-004 | KYC-P01 | Verify that premium must be affordable against income (20%)", { "tag": ["@regression", "@api", "@kyc", "@P1"], "annotation": [{ "type": "validation-id", "description": "KYC-P01" }, { "type": "risk", "description": "R-KYC-03" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }) => {
         // SecureLife, face 250,000, monthly => annual premium 1,187.50. 20% limit: income 5,000 -> 1,000 (fails), 50,000 -> 10,000 (passes).
         const app = await buildApplication(page, {
             agentEmail: agent(), upTo: 'product', kyc: { annualIncome: 5000 },
@@ -77,6 +77,8 @@ test.describe('KYC, financial and compliance', () => {
         await test.step('income 5,000 is flagged on the review page and by the validate API', async () => {
             await review.goto(app.id);
             expect(anyMatches(await review.errors(), MSG.affordability), 'affordability error on review page').toBe(true);
+            if (!api.available)
+                return; // the REST API is not reachable on this environment: the UI check above already ran
             const res = await api.validate(app.id, agent());
             expect(errorTexts(res).join(' | ')).toMatch(MSG.affordability);
         });

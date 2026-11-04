@@ -62,7 +62,7 @@ test.describe('Document upload', () => {
             });
         }
     });
-    test("TC-DOC-004 | DOC-V04 | Verify that missing KYC_ID document prevents submission", { "tag": ["@regression", "@api", "@documents", "@SDC-06", "@P1"], "annotation": [{ "type": "validation-id", "description": "DOC-V04" }, { "type": "risk", "description": "R-KYC-02" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-06" }] }, async ({ page, api }) => {
+    test("TC-DOC-004 | DOC-V04 | Verify that missing KYC_ID document prevents submission", { "tag": ["@regression", "@api", "@documents", "@P1"], "annotation": [{ "type": "validation-id", "description": "DOC-V04" }, { "type": "risk", "description": "R-KYC-02" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }) => {
         const app = await buildApplication(page, { agentEmail: agent(), upTo: 'beneficiaries' }); // everything except documents
         const review = new ReviewPage(page);
         await review.goto(app.id);
@@ -80,7 +80,7 @@ test.describe('Document upload', () => {
     });
 });
 test.describe('Validation summary and submit control', () => {
-    test("TC-DOC-007 | VAL-V03 | Verify that submit remains disabled until critical errors are resolved", { "tag": ["@regression", "@api", "@documents", "@SDC-17", "@P1"], "annotation": [{ "type": "validation-id", "description": "VAL-V03" }, { "type": "risk", "description": "R-WF-02" }, { "type": "priority", "description": "P1" }, { "type": "seeded-defect-candidate", "description": "SDC-17" }] }, async ({ page, api }) => {
+    test("TC-DOC-007 | VAL-V03 | Verify that submit remains disabled until critical errors are resolved", { "tag": ["@regression", "@api", "@documents", "@P1"], "annotation": [{ "type": "validation-id", "description": "VAL-V03" }, { "type": "risk", "description": "R-WF-02" }, { "type": "priority", "description": "P1" }] }, async ({ page, api }) => {
         const app = await buildApplication(page, { agentEmail: agent(), upTo: 'beneficiaries' }); // only the KYC_ID document is missing
         const review = new ReviewPage(page);
         const docs = new DocumentUploadPage(page);
